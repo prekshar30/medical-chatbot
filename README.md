@@ -1,15 +1,18 @@
 # medical-chatbot
-# STEP 1 - Create a conda environment after opening repository
 
 Clone the repository
 
-'''bash
+```bash
 git clone https://github.com/prekshar30/medical-chatbot.git 
-
+```
+# STEP 1 - Create a conda environment after opening repository
+```bash
 conda create -n medibot python=3.10 -y
-
+```
+```bash
 conda activate medibot
-
+```
 # STEP 2 - install the requirements
-
-pip install -r requirements.txt
+```bash
+pip install -r requirements.
+```
