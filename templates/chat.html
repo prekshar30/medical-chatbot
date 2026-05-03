@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedAI Assistant</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Glass container */
+.app-container {
+    width: 380px;
+    height: 600px;
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.08);
+    border-radius: 20px;
+    box-shadow: 0 0 25px rgba(0,255,255,0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Header */
+.header {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.logo {
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.status {
+    color: #00ff9c;
+}
+
+/* Chat */
+.chat-box {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.message {
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 12px;
+    max-width: 75%;
+    animation: fadeIn 0.3s ease;
+}
+
+.user {
+    background: #00c6ff;
+    color: white;
+    margin-left: auto;
+}
+
+.bot {
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+
+/* Input */
+.input-area {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+}
+
+button {
+    margin-left: 8px;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: #00c6ff;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #0072ff;
+    transform: scale(1.05);
+}
+
+/* Scrollbar */
+.chat-box::-webkit-scrollbar {
+    width: 5px;
+}
+.chat-box::-webkit-scrollbar-thumb {
+    background: #00c6ff;
+    border-radius: 10px;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <div class="header">
+        <div class="logo">🤖 MedAI</div>
+        <div class="status">● Online</div>
+    </div>
+
+    <div class="chat-box" id="chatBox"></div>
+
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="Type your symptoms..." />
+        <button onclick="sendMessage()">➤</button>
+        <button onclick="clearChat()">🗑️</button>
+    </div>
+
+</div>
+
+<script>
+let chatBox = document.getElementById("chatBox");
+
+// Load history
+window.onload = () => {
+    chatBox.innerHTML = localStorage.getItem("chat") || "";
+};
+
+function saveChat() {
+    localStorage.setItem("chat", chatBox.innerHTML);
+}
+
+function sendMessage() {
+    let input = document.getElementById("userInput");
+    let message = input.value.trim();
+    if (message === "") return;
+
+    let userMsg = `<div class="message user">${message}</div>`;
+    chatBox.innerHTML += userMsg;
+
+    // Typing effect
+    let typing = `<div class="message bot" id="typing">Typing...</div>`;
+    chatBox.innerHTML += typing;
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    fetch("/get", {
+        method: "POST",
+        body: new URLSearchParams({ msg: message }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+    })
+    .then(res => res.text())
+    .then(data => {
+        document.getElementById("typing").remove();
+        chatBox.innerHTML += `<div class="message bot">${data}</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+        saveChat();
+    });
+
+    input.value = "";
+}
+
+function clearChat() {
+    chatBox.innerHTML = "";
+    localStorage.removeItem("chat");
+}
+
+// Enter key
+document.getElementById("userInput").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") sendMessage();
+});
+</script>
+
+</body>
+</html>
