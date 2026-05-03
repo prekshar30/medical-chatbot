@@ -43,7 +43,7 @@ pip install -r requirements.txt
    1. AmazonEC2ContainerRegistryFullAcess
    2. AmazonEC2FullAccess
 ## 3. Create ECR repo to store/save docker image
-   -Save the URI: 
+   -Save the URI: 412906648508.dkr.ecr.us-east-1.amazonaws.com/medicalbot
 ## 4. Create EC2 machine (Ubuntu)
 
 ## 5. Open EC2 and Install docker in EC2 Machine:
